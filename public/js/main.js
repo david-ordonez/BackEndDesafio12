@@ -12,9 +12,10 @@ formAgregarProducto.addEventListener('submit', e => {
     }
     socket.emit('nuevoProducto', producto);
     formAgregarProducto.reset()
+    return false;
 })
 
-socket.on('productos', productos => {
+socket.on('listaProductos', productos => {
     makeHtmlTable(productos).then(html => {
         document.getElementById('productos').innerHTML = html
     })
@@ -36,13 +37,14 @@ function makeHtmlTable(productos) {
 
 /* --------------------- DESNORMALIZACIÓN DE MENSAJES ---------------------------- */
 // Definimos un esquema de autor
-const schemaAuthor = new normalizr.schema.Entity('author', {}, { idAttribute: 'id' });
+const authorSchema = new normalizr.schema.Entity('author', {}, { idAttribute: 'email' });
+const mensajeSchema = new normalizr.schema.Entity('post', {
+    author: authorSchema
+}, { idAttribute: 'id' });
 
-// Definimos un esquema de mensaje
-const schemaMensaje = new normalizr.schema.Entity('post', { author: schemaAuthor }, { idAttribute: '_id' })
-
-// Definimos un esquema de posts
-const schemaMensajes = new normalizr.schema.Entity('posts', { mensajes: [schemaMensaje] }, { idAttribute: 'id' })
+const postsSchema = new normalizr.schema.Entity('posts', {
+    mensajes: [mensajeSchema]
+}, { idAttribute: 'id' });
 /* ----------------------------------------------------------------------------- */
 
 const inputUsername = document.getElementById('username')
@@ -62,32 +64,25 @@ formPublicarMensaje.addEventListener('submit', e => {
             alias: document.getElementById('alias').value,
             avatar: document.getElementById('avatar').value
         },
-        text: inputMensaje.value
+        text: inputMensaje.value,
+        fecha: `${fecha.toLocaleDateString('es-MX')} ${fecha.toLocaleTimeString('es-MX')}`
     }
 
     socket.emit('nuevoMensaje', mensaje);
     formPublicarMensaje.reset()
-    inputMensaje.focus()
+    inputMensaje.focus();
+    return false;
 })
 
-socket.on('mensajes', mensajesN => {
-
-    const mensajesNsize = JSON.stringify(mensajesN).length
-    console.log(mensajesN, mensajesNsize);
-
-    const mensajesD = normalizr.denormalize(mensajesN.result, schemaMensajes, mensajesN.entities)
-
-    const mensajesDsize = JSON.stringify(mensajesD).length
-    console.log(mensajesD, mensajesDsize);
-
-    const porcentajeC = parseInt((mensajesNsize * 100) / mensajesDsize)
-    console.log(`Porcentaje de compresión ${porcentajeC}%`)
-    document.getElementById('compresion-info').innerText = porcentajeC
-
-    console.log(mensajesD.mensajes);
-    const html = makeHtmlList(mensajesD.mensajes)
-    document.getElementById('mensajes').innerHTML = html;
-})
+socket.on('listaMensajes', async listaMensajes => {    
+    const denormalizedData = normalizr.denormalize(listaMensajes.normalizedData?.result, postsSchema, listaMensajes.normalizedData?.entities);
+    console.log('desnormalizado =>' + JSON.stringify(denormalizedData));
+    if(denormalizedData){
+        const html = await renderListaMensajes(denormalizedData.mensajes);
+        document.getElementById('mensajes').innerHTML = html;
+        document.getElementById('compresion-info').innerText = listaMensajes.porcentaje !== 0 ? `(Compresion: ${listaMensajes.porcentaje} %)`: '';
+    }
+});
 
 function makeHtmlList(mensajes) {
     return mensajes.map(mensaje => {

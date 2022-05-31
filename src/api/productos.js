@@ -1,7 +1,7 @@
 import config from '../config.js'
 
-import ContenedorArchivo from '../contenedores/ContenedorArchivo.js'
+import ContenedorSQL from '../contenedores/ContenedorSQL.js'
 
-const productosApi = new ContenedorArchivo(`${config.fileSystem.path}/productos.json`)
+const productosApi = new ContenedorSQL(config.sqlite3,'productos');
 
 export default productosApi
