@@ -14,7 +14,6 @@ import productosWebRouter from './routers/web/home.js'
 
 import addProductosHandlers from './routers/ws/productos.js'
 import addMensajesHandlers from './routers/ws/mensajes.js'
-import { allowedNodeEnvironmentFlags } from 'process'
 
 
 
@@ -43,7 +42,15 @@ app.use(express.static('public'))
 
 app.set('view engine', 'ejs');
 
-//app.use(session({}))
+app.use(session({
+    store: MongoStore.create(config.mongoRemote),
+    secret: 'secreto',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 60000
+    }
+}));
 
 //--------------------------------------------
 // rutas del servidor API REST

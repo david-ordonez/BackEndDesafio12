@@ -54,7 +54,7 @@ const btnEnviar = document.getElementById('btnEnviar')
 const formPublicarMensaje = document.getElementById('formPublicarMensaje')
 formPublicarMensaje.addEventListener('submit', e => {
     e.preventDefault()
-
+    const fecha = new Date();
     const mensaje = {
         author: {
             email: inputUsername.value,
@@ -78,9 +78,9 @@ socket.on('listaMensajes', async listaMensajes => {
     const denormalizedData = normalizr.denormalize(listaMensajes.normalizedData?.result, postsSchema, listaMensajes.normalizedData?.entities);
     console.log('desnormalizado =>' + JSON.stringify(denormalizedData));
     if(denormalizedData){
-        const html = await renderListaMensajes(denormalizedData.mensajes);
+        const html = await makeHtmlList(denormalizedData.mensajes);
         document.getElementById('mensajes').innerHTML = html;
-        document.getElementById('compresion-info').innerText = listaMensajes.porcentaje !== 0 ? `(Compresion: ${listaMensajes.porcentaje} %)`: '';
+        document.getElementById('compresion-info').innerText = listaMensajes.porcentaje !== 0 ? `${listaMensajes.porcentaje}`: '';
     }
 });
 
@@ -89,7 +89,7 @@ function makeHtmlList(mensajes) {
         return (`
         <div>
             <b style="color:blue;">${mensaje.author.email}</b>
-            [<span style="color:brown;">${mensaje.fyh}</span>] :
+            [<span style="color:brown;">${mensaje.fecha}</span>] :
             <i style="color:green;">${mensaje.text}</i>
             <img width="50" src="${mensaje.author.avatar}" alt=" ">
         </div>

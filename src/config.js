@@ -4,7 +4,8 @@ export default {
         
     },
     mongoRemote: {
-        
+        mongoUrl: 'mongodb+srv://javiaps94:javiaps94@cluster0.rcf6c.mongodb.net/sesiones?retryWrites=true&w=majority',
+        mongoOptions: advancedOptions        
     },
     sqlite3: {
         client: 'sqlite3',

@@ -34,7 +34,7 @@ class ContenedorArchivo {
         newId = elementos[elementos.length - 1].id + 1;
       }
       elementos.push({ ...elem, id: newId });
-      await fm.saveFile(this.ruta, JSON.stringify(elem, null, 2));
+      await fm.saveFile(this.ruta, JSON.stringify(elementos, null, 2));
     } catch (error) {
       console.log(error);
     }

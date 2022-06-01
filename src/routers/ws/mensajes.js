@@ -2,7 +2,7 @@ import mensajesApi from '../../api/mensajes.js'
 import { normalizarMensajes } from '../../normalizacion/index.js'
 
 export default async function configurarSocket(socket, sockets) {
-    socket.emit('listaMensajes',mensajesApi.listarAll());
+    socket.emit('listaMensajes',await mensajesApi.listarAll());
     socket.on('nuevoMensaje', async nuevoMensaje => {
         await mensajesApi.guardar(nuevoMensaje);
 
@@ -10,7 +10,7 @@ export default async function configurarSocket(socket, sockets) {
         const normalizedData = normalizarMensajes(listaMensajes);
         const porcentaje = calculaPorcentaje(listaMensajes, normalizedData) 
 
-        io.sockets.emit('listaMensajes',{ normalizedData, porcentaje } );
+        sockets.emit('listaMensajes',{ normalizedData, porcentaje } );
     });    
 }
 

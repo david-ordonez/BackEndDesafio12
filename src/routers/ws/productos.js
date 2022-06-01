@@ -6,6 +6,6 @@ export default async function configurarSocket(socket, sockets) {
 
     socket.on('nuevoProducto',async nuevoProducto => {
         await productosApi.guardar(nuevoProducto);
-        sockets.emit('listaProductos', productosApi.listarAll());
+        sockets.emit('listaProductos', await productosApi.listarAll());
     });
 }
