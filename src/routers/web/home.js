@@ -9,6 +9,7 @@ const __dirname = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const productosWebRouter = new Router()
 
 productosWebRouter.get('/home', webAuth, (req, res) => {
+    const nom = req.session.nombre;
     res.render('pages/home', {nombre: req.session.nombre});
 })
 

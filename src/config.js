@@ -4,8 +4,11 @@ export default {
         
     },
     mongoRemote: {
-        mongoUrl: 'mongodb+srv://javiaps94:javiaps94@cluster0.rcf6c.mongodb.net/sesiones?retryWrites=true&w=majority',
-        mongoOptions: advancedOptions        
+        mongoUrl: 'mongodb+srv://dordonez:00Gd801011_@cluster0.thmqy.mongodb.net/ecommerce',
+        mongoOptions: { 
+            useNewUrlParser: true, 
+            useUnifiedTopology: true 
+          }
     },
     sqlite3: {
         client: 'sqlite3',

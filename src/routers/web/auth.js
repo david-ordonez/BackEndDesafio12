@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../views/');
 const authWebRouter = new Router()
@@ -25,9 +26,12 @@ authWebRouter.get('/logout', (req, res) => {
 
 
 authWebRouter.post('/login', (req, res) => {
-    const { nombre } = req.query;
-
+    const { nombre } = req.body;
+    if(!nombre){
+        return res.redirect('/login');
+    }
     req.session.nombre = nombre;
+    return res.redirect('/home');
 })
 
 
